@@ -30,7 +30,7 @@ app.get ('/todos/:id', function (req, res){
 	if(todoItem){
 		res.json(todoItem);
 	}else{
-		res.status(404).send;
+		res.status(404).send('Not found');
 	}
 });
 
