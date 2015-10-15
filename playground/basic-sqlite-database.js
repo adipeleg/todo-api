@@ -2,7 +2,7 @@ var Sequelize = require('sequelize');
 var sequelize = new Sequelize(undefined, undefined, undefined, {
 	'dialect': 'sqlite',
 	'storage': __dirname + '/basic-sqlite-database.sqlite'
-});  //create an instance of sequelize
+}); //create an instance of sequelize
 
 var Todo = sequelize.define('todo', {
 	description: {
@@ -19,46 +19,82 @@ var Todo = sequelize.define('todo', {
 	}
 })
 
+var User = sequelize.define('user', {
+	email: Sequelize.STRING
+});
+
+Todo.belongsTo(User);
+User.hasMany(Todo);
+
 
 sequelize.sync({
-	//force: true   //delete the database
-}).then(function () {
+	//force: true //delete the database
+}).then(function() {
 	console.log('Everything is synced');
 
-	Todo.findById(2).then (function (todo){
-		if (todo) {
-			console.log (todo.toJSON());
-		} else {
-			console.log('todo not found');
-		}
+	User.findById(1).then(function(user) {
+		user.getTodos({
+			where: {
+				completed: false
+			}
+		}).then(function(todos) {
+			todos.forEach(function(todo) {
+				console.log(todo.toJSON());
+			});
+		});
 	});
-	
-	// Todo.create({
-	// 	description: 'Take out trash',
-	// 	//completed: false
-	// }).then(function (todo) {
-	// 	return Todo.create({
-	// 		description: 'Clean office'
-	// 	});
-	// }).then(function(){
-	// 	//return Todo.findById(1)   //find object using id
-	// 	return Todo.findAll({       //search by a qritiria
-	// 		where: {
-	// 			//completed: false    //search all false
-	// 			description: {
-	// 				$like: '%Office%'  //search for descriptiom with the word "trash" in it
-	// 			}
-	// 		}
-	// 	});
-	// }).then(function (todos) {
-	// 	if(todos) {
-	// 		todos.forEach(function(todo){
-	// 			console.log(todo.toJSON());
-	// 		});	
-	// 	} else {
-	// 		console.log ('no todo found');
-	// 	}
-	// }).catch(function (e) {
-	// 	console.log(e);
-	// });
 });
+
+
+
+// 	User.create({
+// 		email: 'Adi@exmp.com'
+// 	}).then(function() {
+// 		return Todo.create({
+// 			description: 'clean yard'
+// 		});
+// 	}). then (function (todo) {
+// 		User.findById(1).then(function(user){
+// 			user.addTodo(todo);
+// 		});
+// 	});
+
+// });
+
+// Todo.findById(2).then (function (todo){
+// 	if (todo) {
+// 		console.log (todo.toJSON());
+// 	} else {
+// 		console.log('todo not found');
+// 	}
+// });
+
+// Todo.create({
+// 	description: 'Take out trash',
+// 	//completed: false
+// }).then(function (todo) {
+// 	return Todo.create({
+// 		description: 'Clean office'
+// 	});
+// }).then(function(){
+// 	//return Todo.findById(1)   //find object using id
+// 	return Todo.findAll({       //search by a qritiria
+// 		where: {
+// 			//completed: false    //search all false
+// 			description: {
+// 				$like: '%Office%'  //search for descriptiom with the word "trash" in it
+// 			}
+// 		}
+// 	});
+// }).then(function (todos) {
+// 	if(todos) {
+// 		todos.forEach(function(todo){
+// 			console.log(todo.toJSON());
+// 		});	
+// 	} else {
+// 		console.log ('no todo found');
+// 	}
+// }).catch(function (e) {
+// 	console.log(e);
+// });
+// });

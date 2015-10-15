@@ -66,7 +66,11 @@ app.post('/todos' ,middleware.requireAuthentication, function(req, res) {
 	//call create on db.todo
 
 	db.todo.create(body).then(function(todo) {
-		res.json(todo.toJSON());
+		req.user.addTodo(todo).then(function(){   //add this todo item to this user association
+			return todo.reload();  //relode the new todo with the association to the database
+		}).then (function(todo){
+			res.json(todo.toJSON());
+		});
 	}, function(e) {
 		//console.log("problem with post");
 		res.status(400).json(e);
